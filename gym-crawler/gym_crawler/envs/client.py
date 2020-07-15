@@ -2,6 +2,7 @@ import requests
 import time
 
 import pyrebase
+import threading
 
 config = {
   "apiKey": "apiKey",
@@ -15,29 +16,42 @@ firebase = pyrebase.initialize_app(config)
 db = firebase.database()
 
 def set_speed(action_list):
-    state_gotten = {"gotten": False}
-    def done(message):
-        state_gotten["gotten"] = True
-    db.update({"action_list": action_list})
-    db.update({"action_performed": 0})
-    stream = db.child("action_performed").stream(done)
-    while not state_gotten["gotten"]:
-        pass
+    global stream
+    result_available = threading.Event()
+
+    def wait():
+        def done(message):
+            result_available.set()
+        db.update({"action_list": action_list})
+        db.update({"action_performed": 0})
+        global stream
+        stream = db.child("action_performed").stream(done)
+
+    thread = threading.Thread(target=wait)
+    thread.start()
+    result_available.wait()
     stream.close()
     db.update({"action_performed": 0})
 
 def get_state():
-    state_gotten = {"gotten": False, "state_list": []}
-    def parse_and_return_state(message):
-        state_gotten["state_list"] = db.child("state_list").get().val()
-        state_gotten["gotten"] = True
-    
-    db.update({"state_needed": 1})
-    stream = db.child("state_list").stream(parse_and_return_state)
-    while not state_gotten["gotten"]:
-        pass
+    global state_list
+    result_available = threading.Event()
+    global stream
+    def get():
+        def parse_and_return_state(message):
+            global state_list
+            state_list = db.child("state_list").get().val()
+            result_available.set()
+        
+        db.update({"state_needed": 1})
+        global stream
+        stream = db.child("state_list").stream(parse_and_return_state)
+
+    thread = threading.Thread(target=get)
+    thread.start()
+    result_available.wait()
     stream.close()
-    return state_gotten["state_list"]
+    return state_list
 
 def get_action():
     action_list = db.child("action_list").get().val()
