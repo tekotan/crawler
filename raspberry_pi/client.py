@@ -27,6 +27,6 @@ def set_action(message):
 try:
     db.child("state_needed").stream(state_needed)
     db.child("action_list").stream(set_action)
-    pause()
+    pause
 except KeyboardInterrupt:
     print("Exiting...")
