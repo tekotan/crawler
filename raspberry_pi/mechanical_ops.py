@@ -7,7 +7,7 @@ ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600, parity=serial.PARITY_NON
 def set_speed(action_list):
     ser.write(str.encode('A'))
     for i in action_list:
-        ser.write(str.encode(i))
+        ser.write(str.encode(str(i)))
     time.sleep(0.7)
 
 def get_state():
