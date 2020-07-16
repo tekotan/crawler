@@ -5,13 +5,13 @@ ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600, parity=serial.PARITY_NON
         stopbits=serial.STOPBITS_ONE,bytesize=serial.EIGHTBITS,timeout=None)
 
 def set_speed(action_list):
-    ser.write('A')
+    ser.write(str.encode('A'))
     for i in action_list:
-        ser.write(i)
+        ser.write(str.encode(i))
     time.sleep(0.7)
 
 def get_state():
-    ser.write('G') # get motor state
+    ser.write(str.encode('G')) # get motor state
     state_data = ser.readline()
     state_list = list(map(int, state_data.split(", ")))
     if state_list[12] > 1100:
