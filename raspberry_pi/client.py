@@ -18,7 +18,7 @@ firebase = pyrebase.initialize_app(config)
 db = firebase.database()
 
 def state_needed(message):
-    db.update({"state_list": mech.get_state(), "state_needed": 1})
+    db.update({"state_list": mech.get_state(), "state_needed": 0})
 
 def set_action(message):
     action_list = message["data"]
