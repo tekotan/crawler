@@ -36,7 +36,6 @@ void do_action(int actions[]){
 }
 
 void setup(){
-    Serial.begin(9600);
     for (int i = 0; i < MAX_PINS; i++)
     {
         servo[i].attach(pin + i);
@@ -46,6 +45,7 @@ void setup(){
     pinMode(echo, INPUT);
 }
 void loop(){
+    Serial.begin(9600);
     if (Serial.available()){
         char message = Serial.read();
         int actions[12];
@@ -61,7 +61,7 @@ void loop(){
                 Serial.print("D");
                 break;
             case 'G':
-                //int * states = get_state();
+                states = get_state();
                 for (int i=0; i < 13; i++){
                     Serial.print(*(states + i));
                     Serial.print(", ");
