@@ -9,10 +9,11 @@ def set_speed(action_list):
     for i in action_list:
         ser.write(i)
     time.sleep(0.7)
-    print(action_list)
 
 def get_state():
     ser.write("G") # get motor state
     state_data = ser.readline()
     state_list = list(map(int, state_data.split(", ")))
+    if state_list[12] > 1100:
+        state_list[12] = 1100
     return state_list
