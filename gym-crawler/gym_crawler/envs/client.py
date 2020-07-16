@@ -45,7 +45,7 @@ def get_state():
         
         db.update({"state_needed": 1})
         global stream
-        stream = db.child("state_list").stream(parse_and_return_state)
+        stream = db.child("state_needed").stream(parse_and_return_state)
 
     thread = threading.Thread(target=get)
     thread.start()
