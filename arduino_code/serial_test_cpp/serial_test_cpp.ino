@@ -9,8 +9,8 @@ const int trig = A1;
 //define servos' ports
 const int pin = 2;
 
-double * get_state(){
-    int state_arr[13] = {}
+int * get_state(){
+    int state_arr[13] = {};
     for (int i = 0; i < MAX_PINS; i++)
     {
         state_arr[i] = servo[i].read();
@@ -28,7 +28,7 @@ double * get_state(){
     state_arr[12] = cm;
     return state_arr;
 }
-void do_action(int [] actions){
+void do_action(int actions[]){
     for (int i=0; i<MAX_PINS; i++){
         servo[i].write(actions[i]);
         delay(50);
@@ -48,18 +48,20 @@ void setup(){
 void loop(){
     if (Serial.available()){
         char message = Serial.read();
+        int actions[12];
+        int * states;
         switch (message){
             case 'A':
-                int actions[12];
+                //int actions[12];
                 for (int i=0; i<12; i++){
                     int c = Serial.read();
                     actions[i] = c;
                 }
                 do_action(actions);
-                Serial.print("D")
+                Serial.print("D");
                 break;
             case 'G':
-                double * states = get_state();
+                //int * states = get_state();
                 for (int i=0; i < 13; i++){
                     Serial.print(*(states + i));
                     Serial.print(", ");
